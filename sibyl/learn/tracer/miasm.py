@@ -1,17 +1,17 @@
 '''
-This module gives a tracer that uses miasm to run the program
+This module gives a tracer that usesmiasm to run the program
 '''
 
 from sibyl.learn.tracer.tracer import Tracer
 from sibyl.learn.trace import Trace, Snapshot
 
-from miasm2.jitter.emulatedsymbexec import EmulatedSymbExec
-from miasm2.jitter.csts import PAGE_READ
-from miasm2.analysis.machine import Machine
-from miasm2.jitter.loader.elf import vm_load_elf
+from miasm.jitter.emulatedsymbexec import EmulatedSymbExec
+from miasm.jitter.csts import PAGE_READ
+from miasm.analysis.machine import Machine
+from miasm.jitter.loader.elf import vm_load_elf
 
 class CustomEmulatedSymbExec(EmulatedSymbExec):
-    '''New emulator that trap all memory read and write which is needed by the miasm tracer'''
+    '''New emulator that trap all memory read and write which is needed by themiasm tracer'''
 
     def __init__(self, *args, **kwargs):
         super(CustomEmulatedSymbExec, self).__init__(*args, **kwargs)
@@ -52,7 +52,7 @@ class CustomEmulatedSymbExec(EmulatedSymbExec):
 
 class TracerMiasm(Tracer):
 
-    '''Tracer that uses miasm'''
+    '''Tracer that usesmiasm'''
 
     def __init__(self, *args, **kwargs):
         super(TracerMiasm, self).__init__(*args, **kwargs)
@@ -83,7 +83,7 @@ class TracerMiasm(Tracer):
 
     def begin_func(self, jitter):
         '''
-        Function called by miasm at the begin of every execution of the traced function
+        Function called bymiasm at the begin of every execution of the traced function
         '''
         self.old_ret_addr = jitter.pop_uint64_t()
         jitter.push_uint64_t(0x1337beef)
@@ -107,7 +107,7 @@ class TracerMiasm(Tracer):
 
     def end_func(self, jitter):
         '''
-        Function called by miasm at the end of every execution of the traced function
+        Function called bymiasm at the end of every execution of the traced function
         '''
 
         jitter.pc = self.old_ret_addr
@@ -130,17 +130,17 @@ class TracerMiasm(Tracer):
 
     def end_do_trace(self, jitter):
         '''
-        Function called by miasm at the end of the program's execution
+        Function called bymiasm at the end of the program's execution
         '''
         jitter.run = False
         return False
 
     def do_trace(self):
-        '''Run miasm and construct the trace'''
+        '''Runmiasm and construct the trace'''
 
         self.trace = Trace()
 
-        # Retrieve miasm tools
+        # Retrievemiasm tools
         machine = Machine(self.machine)
         jitter = machine.jitter("python")
 

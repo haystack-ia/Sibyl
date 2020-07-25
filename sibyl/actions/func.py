@@ -16,8 +16,8 @@
 
 import os
 
-from miasm2.analysis.machine import Machine
-from miasm2.analysis.binary import Container
+from miasm.analysis.machine import Machine
+from miasm.analysis.binary import Container
 
 from sibyl.config import config, config_paths
 from sibyl.actions.action import Action
@@ -61,7 +61,7 @@ class ActionFunc(Action):
             if not architecture:
                 raise ValueError("Unable to recognize the architecture, please specify it")
             if self.args.verbose:
-                print "Guessed architecture: %s" % architecture
+                print("Guessed architecture: %s" % architecture)
 
         cont = Container.from_stream(open(self.args.filename))
         machine = Machine(architecture)
@@ -84,10 +84,10 @@ class ActionFunc(Action):
             fh.heuristics.remove(heur)
 
         if self.args.verbose:
-            print "Heuristics to run: %s" % ", ".join(fh.heuristic_names)
+            print("Heuristics to run: %s" % ", ".join(fh.heuristic_names))
 
 
         # Launch guess
         fmt = "0x{:0%dx}" % addr_size
         for addr in fh.guess():
-            print fmt.format(addr)
+            print(fmt.format(addr))

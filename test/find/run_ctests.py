@@ -24,11 +24,13 @@ def get_funcs_exe_source(c_file, filename):
 
     # Find corresponding binary offset
     to_check = []
-    with open(filename) as fdesc:
-        elf = ELF(fdesc.read())
+    with open(filename, 'rb') as fdesc:
+        buf = fdesc.read()
+        elf = ELF(buf)
 
     symbols = {}
-    for name, symb in elf.getsectionbyname(".symtab").symbols.iteritems():
+
+    for name, symb in elf.getsectionbyname(".symtab").symbols.items():
         offset = symb.value
         if name.startswith("__"):
             name = name[2:]
@@ -50,7 +52,7 @@ def get_funcs_heuristics(c_file, filename):
     for name in fh.heuristic_names:
         cmd += ["-e", name]
     cmd.append(filename)
-    print " ".join(cmd)
+    print(" ".join(cmd))
     sibyl = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
     stdout, stderr = sibyl.communicate()
@@ -98,8 +100,8 @@ def test_find(args):
         # to_check: (addr, expected found)
         # extra: possible extra match
         to_check, extra = get_funcs(c_file, filename)
-        print "\n".join("0x%08x: %s" % (addr, funcname)
-                        for (addr, funcname) in to_check)
+        print("\n".join("0x%08x: %s" % (addr, funcname)
+                        for (addr, funcname) in to_check))
 
         # Launch Sibyl
         log_info( "Launch Sibyl" )
@@ -109,13 +111,14 @@ def test_find(args):
 
         cmd = ["sibyl", "find"] + options + [filename]
         cmd += [hex(addr) for addr, _ in to_check]
-        print " ".join(cmd)
+        print(" ".join(cmd))
         sibyl = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
 
         # Parse result
         found = []
         stdout, stderr = sibyl.communicate()
+        stdout = str(stdout, 'ascii')
         for line in stdout.split("\n"):
             if not line or not " : " in line:
                 continue
@@ -124,7 +127,7 @@ def test_find(args):
 
         if sibyl.returncode:
             log_error("Process exits with a %d code" % sibyl.returncode)
-            print stderr
+            print(stderr)
             exit(sibyl.returncode)
 
         log_info( "Evaluate results" )
@@ -135,10 +138,10 @@ def test_find(args):
                 offset, name = element
                 if offset in extra.get(name, []):
                     # Present in symtab but not in C source file
-                    print "[+] Additionnal found: %s (@0x%08x)" % (name, offset)
+                    print("[+] Additionnal found: %s (@0x%08x)" % (name, offset))
                 else:
                     alt_names = [aname
-                                 for aname, offsets in extra.iteritems()
+                                 for aname, offsets in extra.items()
                                  if offset in offsets]
                     log_error("Bad found: %s (@0x%08x -> '%s')" % (name,
                                                                    offset,

@@ -5,9 +5,9 @@ try:
     import pycparser
 except ImportError:
     raise ImportError("pycparser module is needed to learn and generate")
-from miasm2.core.objc import CTypesManagerNotPacked
-from miasm2.core.ctypesmngr import CAstTypes
-from miasm2.arch.x86.ctype import CTypeAMD64_unk
+from miasm.core.objc import CTypesManagerNotPacked
+from miasm.core.ctypesmngr import CAstTypes
+from miasm.arch.x86.ctype import CTypeAMD64_unk
 
 from sibyl.learn.replay import Replay
 from sibyl.learn.findref import ExtractRef
@@ -102,7 +102,7 @@ class TestCreator(object):
             ignored = 0
         elif config.prune_strategy == "keep":
             # Remove all snapshot but one or a few (according to config)
-            for i, snapshot in xrange(self.trace):
+            for i, snapshot in range(self.trace):
                 trace.append(snapshot)
                 if len(trace) >= config.prune_keep:
                     break

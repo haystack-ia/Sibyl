@@ -16,17 +16,17 @@
 
 
 import random
-from miasm2.jitter.csts import PAGE_READ, PAGE_WRITE
-from miasm2.expression.modint import mod_size2int
-from miasm2.expression.simplifications import expr_simp
+from miasm.jitter.csts import PAGE_READ, PAGE_WRITE
+from miasm.core.modint import mod_size2int
+from miasm.expression.simplifications import expr_simp
 try:
     import pycparser
 except ImportError:
     pycparser = None
 else:
-    from miasm2.core.objc import CTypesManagerNotPacked, CHandler
-    from miasm2.core.ctypesmngr import CAstTypes
-    from miasm2.arch.x86.ctype import CTypeAMD64_unk
+    from miasm.core.objc import CTypesManagerNotPacked, CHandler
+    from miasm.core.ctypesmngr import CAstTypes
+    from miasm.arch.x86.ctype import CTypeAMD64_unk
 
 from sibyl.commons import HeaderFile
 
@@ -88,7 +88,7 @@ class Test(object):
 
         # Memory alignement
         mem += "".join([chr(random.randint(0, 255)) \
-                            for _ in xrange((16 - len(mem) % 16))])
+                            for _ in range((16 - len(mem) % 16))])
 
         self.jitter.vm.add_memory_page(self.alloc_pool, right, mem)
         to_ret = self.alloc_pool
@@ -97,7 +97,7 @@ class Test(object):
         return to_ret
 
     def _alloc_mem(self, size, read=True, write=False):
-        mem = "".join([chr(random.randint(0, 255)) for _ in xrange(size)])
+        mem = "".join([chr(random.randint(0, 255)) for _ in range(size)])
         return self.__alloc_mem(mem, read=read, write=write)
 
     def _alloc_string(self, string, read=True, write=False):

@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from miasm2.analysis.binary import Container
+from miasm.analysis.binary import Container
 
 from sibyl.actions.action import Action
 from sibyl.learn.tracer import AVAILABLE_TRACER
@@ -26,13 +26,13 @@ class ActionLearn(Action):
         (["-a", "--address"], {"help": "Address of the learned function. If " \
                                "not set, the corresponding symbol address is used."}),
         (["-t", "--trace"], {"help": "Used tracer. Available: " \
-                             ", ".join(AVAILABLE_TRACER.keys()),
+                             ", ".join(list(AVAILABLE_TRACER.keys())),
                              "default": "pin",
-                             "choices": AVAILABLE_TRACER.keys()}),
+                             "choices": list(AVAILABLE_TRACER.keys())}),
         (["-g", "--generator"], {"help": "Used generator. Available: " \
-                                 ", ".join(AVAILABLE_GENERATOR.keys()),
+                                 ", ".join(list(AVAILABLE_GENERATOR.keys())),
                                  "default": "python",
-                                 "choices": AVAILABLE_GENERATOR.keys()}),
+                                 "choices": list(AVAILABLE_GENERATOR.keys())}),
         (["-v", "--verbose"], {"help": "Verbose mode (use multiple time to " \
                                "increase verbosity level)",
                                "action": "count",
@@ -87,5 +87,5 @@ class ActionLearn(Action):
         if self.args.output:
             open(self.args.output, "w+").write(createdTest)
         else:
-            print createdTest
+            print(createdTest)
 

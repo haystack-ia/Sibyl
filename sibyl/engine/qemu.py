@@ -1,5 +1,5 @@
-from miasm2.core.utils import pck32, pck64
-from miasm2.jitter.csts import PAGE_READ, PAGE_WRITE
+from miasm.core.utils import pck32, pck64
+from miasm.jitter.csts import PAGE_READ, PAGE_WRITE
 try:
     import unicorn
 except ImportError:
@@ -104,7 +104,7 @@ class UcWrapJitter(object):
 
     @staticmethod
     def hook_code(uc, address, size, user_data):
-        print(">>> Tracing instruction at 0x%x, instruction size = %u" %(address, size))
+        print((">>> Tracing instruction at 0x%x, instruction size = %u" %(address, size)))
         return True
 
     @staticmethod
@@ -154,7 +154,7 @@ class UcWrapVM(object):
         return dico
 
     def is_mapped(self, address, size):
-        for addr in xrange(address, address + size):
+        for addr in range(address, address + size):
             for page in self.mem_page:
                 if page["addr"] <= addr < page["addr"] + page["size"]:
                     break
@@ -179,7 +179,7 @@ class UcWrapVM(object):
                 new_mem_page.append(page)
                 addrs.add(page["addr"])
 
-        for addr, page in mem_state.iteritems():
+        for addr, page in mem_state.items():
             # Add missing pages
             if addr not in addrs:
                 self.mu.mem_map(addr, page["size"])
@@ -212,7 +212,7 @@ class UcWrapCPU(object):
         self.logger = init_logger("UcWrapCPU")
 
     def init_regs(self):
-        for reg in self.regs.itervalues():
+        for reg in self.regs.values():
             self.mu.reg_write(reg, 0)
 
     def __setattr__(self, name, value):
@@ -234,10 +234,10 @@ class UcWrapCPU(object):
             raise AttributeError
 
     def get_gpreg(self):
-        return {k: self.mu.reg_read(v) for k, v in self.regs.iteritems()}
+        return {k: self.mu.reg_read(v) for k, v in self.regs.items()}
 
     def set_gpreg(self, values):
-        for k, v in values.iteritems():
+        for k, v in values.items():
             self.mu.reg_write(self.regs[k], v)
 
     @classmethod

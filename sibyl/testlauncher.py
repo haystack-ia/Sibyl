@@ -20,7 +20,7 @@
 import time
 import signal
 import logging
-from miasm2.analysis.binary import Container, ContainerPE, ContainerELF
+from miasm.analysis.binary import Container, ContainerPE, ContainerELF
 
 from sibyl.commons import init_logger, TimeoutException, END_ADDR
 from sibyl.engine import QEMUEngine, MiasmEngine
@@ -57,18 +57,18 @@ class TestLauncher(object):
         # Get stubs' implementation
         context = {}
         for fpath in config.stubs:
-            execfile(fpath, context)
+            exec(compile(open(fpath, "rb").read(), fpath, 'exec'), context)
         if not context:
             return
 
         libs = None
         if isinstance(self.ctr, ContainerPE):
-            from miasm2.jitter.loader.pe import preload_pe, libimp_pe
+            from miasm.jitter.loader.pe import preload_pe, libimp_pe
             libs = libimp_pe()
             preload_pe(self.jitter.vm, self.ctr.executable, libs)
 
         elif isinstance(self.ctr, ContainerELF):
-            from miasm2.jitter.loader.elf import preload_elf, libimp_elf
+            from miasm.jitter.loader.elf import preload_elf, libimp_elf
             libs = libimp_elf()
             preload_elf(self.jitter.vm, self.ctr.executable, libs)
 

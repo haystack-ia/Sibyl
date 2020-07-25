@@ -16,7 +16,7 @@
 """Configuration handling"""
 
 import os
-import ConfigParser
+import configparser
 
 default_config = {
     "jit_engine": ["qemu", "miasm"],
@@ -67,7 +67,7 @@ class Config(object):
     def expandpath(path):
         """Expand @path with following rules:
         - $SIBYL is replaced by the installation path of Sibyl
-        - $MIASM is replaced by the installation path of miasm2
+        - $MIASM is replaced by the installation path of miasm
         - path are expanded ('~' -> '/home/user', ...)
         """
         if "$SIBYL" in path:
@@ -76,9 +76,9 @@ class Config(object):
             path = path.replace("$SIBYL", sibyl_base)
 
         if "$MIASM" in path:
-            import miasm2
-            miasm2_base = miasm2.__path__[0]
-            path = path.replace("$MIASM", miasm2_base)
+            import miasm
+            miasm_base = miasm2.__path__[0]
+            path = path.replace("$MIASM", miasm_base)
 
         path = os.path.expandvars(path)
         path = os.path.expanduser(path)
@@ -87,7 +87,7 @@ class Config(object):
 
     def parse_files(self, files):
         """Load configuration from @files (which could not exist)"""
-        cparser = ConfigParser.SafeConfigParser()
+        cparser = configparser.SafeConfigParser()
         cparser.read(files)
 
         config = {}
@@ -177,7 +177,7 @@ class Config(object):
         # Tests
         out.append("")
         out.append("[tests]")
-        for name, path in self.config["tests"].iteritems():
+        for name, path in self.config["tests"].items():
             out.append("%s = %s" % (name, path))
 
         # Miasm
@@ -248,12 +248,12 @@ class Config(object):
 
         # Fetch tests from files
         available_tests = {}
-        for name, fpath in self.config["tests"].iteritems():
+        for name, fpath in self.config["tests"].items():
             fpath = self.expandpath(fpath)
 
             # Get TESTS
             context = {}
-            execfile(fpath, context)
+            exec(compile(open(fpath, "rb").read(), fpath, 'exec'), context)
             available_tests[name] = context["TESTS"]
 
         self._available_tests = available_tests
